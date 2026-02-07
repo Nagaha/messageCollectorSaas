@@ -2,34 +2,47 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+
+<!-- ⭐ IMPORTANT FOR MOBILE -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>Baby Name Guess</title>
 
 <style>
+
+/* ===== Page ===== */
+
 body{
-  font-family: system-ui;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: linear-gradient(135deg,#ffe6ec,#fff);
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
   margin:0;
+  padding:12px; /* ⭐ mobile spacing */
 }
+
+/* ===== Card ===== */
 
 .card{
   background:white;
-  padding:22px;
+  padding:20px;
   border-radius:16px;
-  width:340px;
+  width:100%;
+  max-width:420px; /* ⭐ responsive width */
   box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
 
-/* header */
+/* ===== Header ===== */
+
 .hero{
   text-align:center;
 }
 
 .hero img{
   width:100%;
+  height:auto;
   border-radius:14px;
   margin-bottom:10px;
 }
@@ -37,37 +50,41 @@ body{
 .hero h3{
   color:#ff4d6d;
   margin:6px 0;
+  font-size:20px;
 }
 
 .hero p{
-  font-size:13px;
+  font-size:14px;
   color:#666;
   margin-bottom:10px;
 }
 
-/* ⭐ NEW: countdown style */
+/* ===== Countdown ===== */
+
 .countdown{
   text-align:center;
   font-weight:bold;
   color:#ff4d6d;
-  margin-bottom:12px;
-  font-size:16px;
+  margin-bottom:14px;
+  font-size:15px;
 }
 
-/* language tabs */
+/* ===== Language Tabs ===== */
+
 .tabs{
   display:flex;
   gap:6px;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
 .tab{
   flex:1;
-  padding:7px;
-  border-radius:8px;
+  padding:10px; /* ⭐ bigger tap area */
+  border-radius:10px;
   border:1px solid #ddd;
   background:#f3f3f3;
   cursor:pointer;
+  font-size:14px;
 }
 
 .tab.active{
@@ -75,13 +92,16 @@ body{
   color:white;
 }
 
-/* form */
+/* ===== Inputs ===== */
+
 input, button{
   width:100%;
-  padding:10px;
+  padding:12px; /* ⭐ better touch size */
   margin-top:10px;
-  border-radius:8px;
+  border-radius:10px;
   border:1px solid #ddd;
+  font-size:16px; /* ⭐ prevents iOS zoom */
+  box-sizing:border-box;
 }
 
 button{
@@ -100,7 +120,17 @@ button:disabled{
   text-align:center;
   color:green;
   margin-top:10px;
+  font-size:14px;
 }
+
+/* ===== Extra small screens ===== */
+
+@media (max-width: 360px){
+  .card{
+    padding:16px;
+  }
+}
+
 </style>
 </head>
 
@@ -108,25 +138,25 @@ button:disabled{
 
 <div class="card">
 
-  <!-- family photo + welcome -->
+  <!-- Header -->
   <div class="hero">
     <img src="family.jpg" alt="Family Photo" />
     <h3 id="title">Naming Ceremony</h3>
     <p id="welcome">Guess our little one's name 💛</p>
   </div>
 
-  <!-- ⭐ NEW: countdown -->
+  <!-- Countdown -->
   <div class="countdown">
     ⏳ <span id="timer">Loading...</span>
   </div>
 
-  <!-- language tabs -->
+  <!-- Language -->
   <div class="tabs">
     <button id="enTab" class="tab active" onclick="switchLang('en')">English</button>
     <button id="taTab" class="tab" onclick="switchLang('ta')">தமிழ்</button>
   </div>
 
-  <!-- form -->
+  <!-- Form -->
   <input id="guestName" placeholder="Your Name" />
   <input id="guessName" placeholder="Baby Name Guess" />
 
@@ -134,7 +164,7 @@ button:disabled{
 
   <p id="msg" class="success"></p>
 
-  <a href="wall.html" style="display:block;text-align:center;margin-top:12px;">
+  <a href="wall.html" style="display:block;text-align:center;margin-top:14px;">
     🎉 View Wall
   </a>
 
@@ -144,9 +174,7 @@ button:disabled{
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwoLeYOER8eTiOC3j9NYtfO8IVBeB0_7fxjt1pjeNX5x8brotqgpw0x0xByD-ukW7QR/exec";
 
-/* =========================
-   LANGUAGE SWITCH (unchanged)
-========================= */
+/* ===== Language Switch ===== */
 
 const text = {
   en:{
@@ -181,63 +209,56 @@ function switchLang(lang){
   document.getElementById(lang+"Tab").classList.add("active");
 }
 
-/* =========================
-   SUBMIT (unchanged)
-========================= */
+/* ===== Submit ===== */
 
 async function submitForm(){
-  const guestName=document.getElementById("guestName").value;
-  const guessName=document.getElementById("guessName").value;
+
+  const guestName = document.getElementById("guestName").value.trim();
+  const guessName = document.getElementById("guessName").value.trim();
 
   if(!guestName || !guessName) return;
 
   const btn = document.getElementById("submitBtn");
+
   btn.disabled = true;
   btn.innerText = "Submitting...";
 
   await fetch(API_URL,{
     method:"POST",
-    body:JSON.stringify({ guestName, guessName })
+    headers:{ "Content-Type":"text/plain" },
+    body: JSON.stringify({ guestName, guessName })
   });
 
-  document.getElementById("msg").innerText="Saved ❤️";
-
-  guestName.value="";
-  guessName.value="";
-
+  /* small delay for smooth feel */
   setTimeout(()=>{
-    btn.disabled=false;
-    btn.innerText=text[currentLang].btn;
-  },2000);
+    window.location.href = "wall.html";
+  }, 600);
 }
 
 
-/* =========================
-   ⭐ COUNTDOWN (NEW ONLY)
-========================= */
+/* ===== Countdown ===== */
 
-/* CHANGE END TIME HERE */
-const END_TIME = "2026-02-10T18:30:00";
+const END_TIME = "2026-02-16T11:30:00";
 
 function updateCountdown(){
   const end = new Date(END_TIME).getTime();
   const now = new Date().getTime();
   const diff = end - now;
 
-  const timer = document.getElementById("timer");
-  const btn = document.getElementById("submitBtn");
+  const timer=document.getElementById("timer");
+  const btn=document.getElementById("submitBtn");
 
-  if(diff <= 0){
-    timer.innerText = "Closed";
-    btn.disabled = true;
+  if(diff<=0){
+    timer.innerText="Closed";
+    btn.disabled=true;
     return;
   }
 
-  const h = Math.floor(diff/(1000*60*60));
-  const m = Math.floor((diff%(1000*60*60))/(1000*60));
-  const s = Math.floor((diff%(1000*60))/1000);
+  const h=Math.floor(diff/(1000*60*60));
+  const m=Math.floor((diff%(1000*60*60))/(1000*60));
+  const s=Math.floor((diff%(1000*60))/1000);
 
-  timer.innerText = `${h}h ${m}m ${s}s`;
+  timer.innerText=`${h}h ${m}m ${s}s`;
 }
 
 setInterval(updateCountdown,1000);
