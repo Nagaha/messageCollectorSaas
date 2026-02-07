@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Baby Name Guess</title>
+
+<style>
+body{
+  font-family: system-ui;
+  background: linear-gradient(135deg,#ffe6ec,#fff);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  margin:0;
+}
+
+.card{
+  background:white;
+  padding:22px;
+  border-radius:16px;
+  width:340px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+/* header */
+.hero{
+  text-align:center;
+}
+
+.hero img{
+  width:100%;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+
+.hero h3{
+  color:#ff4d6d;
+  margin:6px 0;
+}
+
+.hero p{
+  font-size:13px;
+  color:#666;
+  margin-bottom:10px;
+}
+
+/* ⭐ NEW: countdown style */
+.countdown{
+  text-align:center;
+  font-weight:bold;
+  color:#ff4d6d;
+  margin-bottom:12px;
+  font-size:16px;
+}
+
+/* language tabs */
+.tabs{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
+
+.tab{
+  flex:1;
+  padding:7px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  background:#f3f3f3;
+  cursor:pointer;
+}
+
+.tab.active{
+  background:#ff4d6d;
+  color:white;
+}
+
+/* form */
+input, button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+button{
+  background:#ff4d6d;
+  color:white;
+  border:none;
+  font-weight:bold;
+}
+
+button:disabled{
+  background:#ccc;
+  cursor:not-allowed;
+}
+
+.success{
+  text-align:center;
+  color:green;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <!-- family photo + welcome -->
+  <div class="hero">
+    <img src="family.jpg" alt="Family Photo" />
+    <h3 id="title">Naming Ceremony</h3>
+    <p id="welcome">Guess our little one's name 💛</p>
+  </div>
+
+  <!-- ⭐ NEW: countdown -->
+  <div class="countdown">
+    ⏳ <span id="timer">Loading...</span>
+  </div>
+
+  <!-- language tabs -->
+  <div class="tabs">
+    <button id="enTab" class="tab active" onclick="switchLang('en')">English</button>
+    <button id="taTab" class="tab" onclick="switchLang('ta')">தமிழ்</button>
+  </div>
+
+  <!-- form -->
+  <input id="guestName" placeholder="Your Name" />
+  <input id="guessName" placeholder="Baby Name Guess" />
+
+  <button onclick="submitForm()" id="submitBtn">Submit</button>
+
+  <p id="msg" class="success"></p>
+
+  <a href="wall.html" style="display:block;text-align:center;margin-top:12px;">
+    🎉 View Wall
+  </a>
+
+</div>
+
+
+<script>
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+
+/* =========================
+   LANGUAGE SWITCH (unchanged)
+========================= */
+
+const text = {
+  en:{
+    title:"Naming Ceremony",
+    welcome:"Guess our little one's name 💛",
+    guest:"Your Name",
+    guess:"Baby Name Guess",
+    btn:"Submit"
+  },
+  ta:{
+    title:"பெயரிடும் விழா",
+    welcome:"குழந்தையின் பெயரை கணிக்கவும் 💛",
+    guest:"உங்கள் பெயர்",
+    guess:"கணித்த பெயர்",
+    btn:"சமர்ப்பிக்கவும்"
+  }
+};
+
+let currentLang="en";
+
+function switchLang(lang){
+  currentLang = lang;
+
+  document.getElementById("title").innerText=text[lang].title;
+  document.getElementById("welcome").innerText=text[lang].welcome;
+  document.getElementById("guestName").placeholder=text[lang].guest;
+  document.getElementById("guessName").placeholder=text[lang].guess;
+  document.getElementById("submitBtn").innerText=text[lang].btn;
+
+  document.getElementById("enTab").classList.remove("active");
+  document.getElementById("taTab").classList.remove("active");
+  document.getElementById(lang+"Tab").classList.add("active");
+}
+
+/* =========================
+   SUBMIT (unchanged)
+========================= */
+
+async function submitForm(){
+  const guestName=document.getElementById("guestName").value;
+  const guessName=document.getElementById("guessName").value;
+
+  if(!guestName || !guessName) return;
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerText = "Submitting...";
+
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({ guestName, guessName })
+  });
+
+  document.getElementById("msg").innerText="Saved ❤️";
+
+  guestName.value="";
+  guessName.value="";
+
+  setTimeout(()=>{
+    btn.disabled=false;
+    btn.innerText=text[currentLang].btn;
+  },2000);
+}
+
+
+/* =========================
+   ⭐ COUNTDOWN (NEW ONLY)
+========================= */
+
+/* CHANGE END TIME HERE */
+const END_TIME = "2026-02-10T18:30:00";
+
+function updateCountdown(){
+  const end = new Date(END_TIME).getTime();
+  const now = new Date().getTime();
+  const diff = end - now;
+
+  const timer = document.getElementById("timer");
+  const btn = document.getElementById("submitBtn");
+
+  if(diff <= 0){
+    timer.innerText = "Closed";
+    btn.disabled = true;
+    return;
+  }
+
+  const h = Math.floor(diff/(1000*60*60));
+  const m = Math.floor((diff%(1000*60*60))/(1000*60));
+  const s = Math.floor((diff%(1000*60))/1000);
+
+  timer.innerText = `${h}h ${m}m ${s}s`;
+}
+
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+</script>
+
+</body>
+</html>
