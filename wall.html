@@ -1,88 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>Baby Name Wall</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <style>
 body{
   font-family:system-ui;
-  background:linear-gradient(135deg,#fff0f5,#ffe6ec);
-  padding:20px;
+  background:#fff8f2;
   margin:0;
+  padding:14px;
 }
 
-h1{
+h2{
   text-align:center;
-  margin-bottom:20px;
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
 }
 
 .card{
   background:white;
+  padding:14px;
   border-radius:14px;
-  padding:15px;
-  text-align:center;
-  box-shadow:0 8px 20px rgba(0,0,0,.1);
-  animation:fade .6s ease;
+  box-shadow:0 6px 16px rgba(0,0,0,.1);
 }
 
 .name{
   font-weight:bold;
   color:#ff4d6d;
-  font-size:18px;
-}
-
-.guest{
-  font-size:13px;
-  color:#666;
-}
-
-@keyframes fade{
-  from{opacity:0; transform:scale(.8);}
-  to{opacity:1;}
+  margin-bottom:6px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>👶 Baby Name Wishes Wall</h1>
+<h2>❤️ Wishes Wall / வாழ்த்து சுவர் ❤️</h2>
 
 <div id="grid" class="grid"></div>
 
-
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwoLeYOER8eTiOC3j9NYtfO8IVBeB0_7fxjt1pjeNX5x8brotqgpw0x0xByD-ukW7QR/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwoLeYOER8eTiOC3j9NYtfO8IVBeB0_7fxjt1pjeNX5x8brotqgpw0x0xByD-ukW7QR/exec";
 
 async function loadData(){
   const res = await fetch(API_URL);
   const data = await res.json();
-  console.log(data);
 
-  const grid = document.getElementById("grid");
   grid.innerHTML="";
 
   data.reverse().forEach(row=>{
     const card=document.createElement("div");
     card.className="card";
-
     card.innerHTML=`
-      <div class="name">${row.guessName}</div>
-      <div class="guest">by ${row.guestName}</div>
+      <div class="name">${row.guestName}</div>
+      <div>${row.guessName}</div>
     `;
-
     grid.appendChild(card);
   });
 }
 
 loadData();
-setInterval(loadData,1000);
+setInterval(loadData,1500);
 </script>
 
 </body>

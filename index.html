@@ -2,39 +2,29 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-
-<!-- ⭐ IMPORTANT FOR MOBILE -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<title>Baby Name Guess</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wishes</title>
 
 <style>
-
-/* ===== Page ===== */
-
 body{
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg,#ffe6ec,#fff);
+  font-family: system-ui;
+  background: linear-gradient(135deg,#fff4e6,#ffe6ec);
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
   margin:0;
-  padding:12px; /* ⭐ mobile spacing */
+  padding:12px;
 }
-
-/* ===== Card ===== */
 
 .card{
   background:white;
   padding:20px;
   border-radius:16px;
   width:100%;
-  max-width:420px; /* ⭐ responsive width */
+  max-width:420px;
   box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
-
-/* ===== Header ===== */
 
 .hero{
   text-align:center;
@@ -42,49 +32,23 @@ body{
 
 .hero img{
   width:100%;
-  height:auto;
   border-radius:14px;
   margin-bottom:10px;
 }
 
-.hero h3{
-  color:#ff4d6d;
-  margin:6px 0;
-  font-size:20px;
-}
-
-.hero p{
-  font-size:14px;
-  color:#666;
-  margin-bottom:10px;
-}
-
-/* ===== Countdown ===== */
-
-.countdown{
-  text-align:center;
-  font-weight:bold;
-  color:#ff4d6d;
-  margin-bottom:14px;
-  font-size:15px;
-}
-
-/* ===== Language Tabs ===== */
-
+/* language tabs */
 .tabs{
   display:flex;
   gap:6px;
-  margin-bottom:12px;
+  margin:10px 0;
 }
 
 .tab{
   flex:1;
-  padding:10px; /* ⭐ bigger tap area */
+  padding:10px;
   border-radius:10px;
   border:1px solid #ddd;
   background:#f3f3f3;
-  cursor:pointer;
-  font-size:14px;
 }
 
 .tab.active{
@@ -92,16 +56,17 @@ body{
   color:white;
 }
 
-/* ===== Inputs ===== */
-
-input, button{
+input, textarea, button{
   width:100%;
-  padding:12px; /* ⭐ better touch size */
+  padding:12px;
   margin-top:10px;
   border-radius:10px;
   border:1px solid #ddd;
-  font-size:16px; /* ⭐ prevents iOS zoom */
-  box-sizing:border-box;
+  font-size:16px;
+}
+
+textarea{
+  min-height:110px;
 }
 
 button{
@@ -110,27 +75,6 @@ button{
   border:none;
   font-weight:bold;
 }
-
-button:disabled{
-  background:#ccc;
-  cursor:not-allowed;
-}
-
-.success{
-  text-align:center;
-  color:green;
-  margin-top:10px;
-  font-size:14px;
-}
-
-/* ===== Extra small screens ===== */
-
-@media (max-width: 360px){
-  .card{
-    padding:16px;
-  }
-}
-
 </style>
 </head>
 
@@ -138,35 +82,22 @@ button:disabled{
 
 <div class="card">
 
-  <!-- Header -->
   <div class="hero">
-    <img src="family.jpg" alt="Family Photo" />
-    <h3 id="title">Naming Ceremony</h3>
-    <p id="welcome">Guess our little one's name 💛</p>
+    <img src="family.jpg" />
+    <h3 id="title">Send Your Wishes ❤️</h3>
+    <p id="subtitle">Share your blessings & memories</p>
   </div>
 
-  <!-- Countdown -->
-  <div class="countdown">
-    ⏳ <span id="timer">Loading...</span>
-  </div>
-
-  <!-- Language -->
+  <!-- Language Switch -->
   <div class="tabs">
     <button id="enTab" class="tab active" onclick="switchLang('en')">English</button>
     <button id="taTab" class="tab" onclick="switchLang('ta')">தமிழ்</button>
   </div>
 
-  <!-- Form -->
   <input id="guestName" placeholder="Your Name" />
-  <input id="guessName" placeholder="Baby Name Guess" />
+  <textarea id="message" placeholder="Write your wishes here..."></textarea>
 
-  <button onclick="submitForm()" id="submitBtn">Submit</button>
-
-  <p id="msg" class="success"></p>
-
-  <a href="wall.html" style="display:block;text-align:center;margin-top:14px;">
-    🎉 View Wall
-  </a>
+  <button onclick="submitForm()" id="submitBtn">Send Wishes</button>
 
 </div>
 
@@ -174,96 +105,63 @@ button:disabled{
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwoLeYOER8eTiOC3j9NYtfO8IVBeB0_7fxjt1pjeNX5x8brotqgpw0x0xByD-ukW7QR/exec";
 
-/* ===== Language Switch ===== */
+/* ===== Language texts ===== */
 
 const text = {
   en:{
-    title:"Naming Ceremony",
-    welcome:"Guess our little one's name 💛",
-    guest:"Your Name",
-    guess:"Baby Name Guess",
-    btn:"Submit"
+    title:"Send Your Wishes ❤️",
+    subtitle:"Share your blessings & memories",
+    name:"Your Name",
+    msg:"Write your wishes here...",
+    btn:"Send Wishes",
+    sending:"Sending..."
   },
   ta:{
-    title:"பெயரிடும் விழா",
-    welcome:"குழந்தையின் பெயரை கணிக்கவும் 💛",
-    guest:"உங்கள் பெயர்",
-    guess:"கணித்த பெயர்",
-    btn:"சமர்ப்பிக்கவும்"
+    title:"உங்கள் வாழ்த்துகளை அனுப்புங்கள் ❤️",
+    subtitle:"உங்கள் ஆசீர்வாதங்களையும் நினைவுகளையும் பகிருங்கள்",
+    name:"உங்கள் பெயர்",
+    msg:"உங்கள் வாழ்த்துகளை எழுதுங்கள்...",
+    btn:"வாழ்த்துகளை அனுப்பு",
+    sending:"அனுப்புகிறது..."
   }
 };
 
 let currentLang="en";
 
+/* language switch */
 function switchLang(lang){
-  currentLang = lang;
+  currentLang=lang;
 
-  document.getElementById("title").innerText=text[lang].title;
-  document.getElementById("welcome").innerText=text[lang].welcome;
-  document.getElementById("guestName").placeholder=text[lang].guest;
-  document.getElementById("guessName").placeholder=text[lang].guess;
-  document.getElementById("submitBtn").innerText=text[lang].btn;
+  title.innerText=text[lang].title;
+  subtitle.innerText=text[lang].subtitle;
+  guestName.placeholder=text[lang].name;
+  message.placeholder=text[lang].msg;
+  submitBtn.innerText=text[lang].btn;
 
-  document.getElementById("enTab").classList.remove("active");
-  document.getElementById("taTab").classList.remove("active");
+  enTab.classList.remove("active");
+  taTab.classList.remove("active");
   document.getElementById(lang+"Tab").classList.add("active");
 }
 
-/* ===== Submit ===== */
-
+/* submit */
 async function submitForm(){
 
-  const guestName = document.getElementById("guestName").value.trim();
-  const guessName = document.getElementById("guessName").value.trim();
+  const name=guestName.value.trim();
+  const msg=message.value.trim();
 
-  if(!guestName || !guessName) return;
+  if(!name || !msg) return;
 
-  const btn = document.getElementById("submitBtn");
-
-  btn.disabled = true;
-  btn.innerText = "Submitting...";
+  submitBtn.disabled=true;
+  submitBtn.innerText=text[currentLang].sending;
 
   await fetch(API_URL,{
     method:"POST",
     headers:{ "Content-Type":"text/plain" },
-    body: JSON.stringify({ guestName, guessName })
+    body: JSON.stringify({ guestName:name, guessName: msg })
   });
 
-  /* small delay for smooth feel */
-  setTimeout(()=>{
-    window.location.href = "wall.html";
-  }, 600);
+  window.location.href="wall.html";
 }
-
-
-/* ===== Countdown ===== */
-
-const END_TIME = "2026-02-16T11:30:00";
-
-function updateCountdown(){
-  const end = new Date(END_TIME).getTime();
-  const now = new Date().getTime();
-  const diff = end - now;
-
-  const timer=document.getElementById("timer");
-  const btn=document.getElementById("submitBtn");
-
-  if(diff<=0){
-    timer.innerText="Closed";
-    btn.disabled=true;
-    return;
-  }
-
-  const h=Math.floor(diff/(1000*60*60));
-  const m=Math.floor((diff%(1000*60*60))/(1000*60));
-  const s=Math.floor((diff%(1000*60))/1000);
-
-  timer.innerText=`${h}h ${m}m ${s}s`;
-}
-
-setInterval(updateCountdown,1000);
-updateCountdown();
-
 </script>
 
 </body>
