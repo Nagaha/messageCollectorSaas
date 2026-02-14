@@ -2,15 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-
-<!-- ⭐ IMPORTANT FOR MOBILE -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
 <title>Baby Name Guess</title>
 
 <style>
-
-/* ===== Page ===== */
 
 body{
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -20,21 +15,17 @@ body{
   align-items:center;
   min-height:100vh;
   margin:0;
-  padding:12px; /* ⭐ mobile spacing */
+  padding:12px;
 }
-
-/* ===== Card ===== */
 
 .card{
   background:white;
   padding:20px;
   border-radius:16px;
   width:100%;
-  max-width:420px; /* ⭐ responsive width */
+  max-width:420px;
   box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
-
-/* ===== Header ===== */
 
 .hero{
   text-align:center;
@@ -59,8 +50,6 @@ body{
   margin-bottom:10px;
 }
 
-/* ===== Countdown ===== */
-
 .countdown{
   text-align:center;
   font-weight:bold;
@@ -68,8 +57,6 @@ body{
   margin-bottom:14px;
   font-size:15px;
 }
-
-/* ===== Language Tabs ===== */
 
 .tabs{
   display:flex;
@@ -79,7 +66,7 @@ body{
 
 .tab{
   flex:1;
-  padding:10px; /* ⭐ bigger tap area */
+  padding:10px;
   border-radius:10px;
   border:1px solid #ddd;
   background:#f3f3f3;
@@ -92,15 +79,13 @@ body{
   color:white;
 }
 
-/* ===== Inputs ===== */
-
 input, button{
   width:100%;
-  padding:12px; /* ⭐ better touch size */
+  padding:12px;
   margin-top:10px;
   border-radius:10px;
   border:1px solid #ddd;
-  font-size:16px; /* ⭐ prevents iOS zoom */
+  font-size:16px;
   box-sizing:border-box;
 }
 
@@ -123,8 +108,6 @@ button:disabled{
   font-size:14px;
 }
 
-/* ===== Extra small screens ===== */
-
 @media (max-width: 360px){
   .card{
     padding:16px;
@@ -142,7 +125,7 @@ button:disabled{
   <div class="hero">
     <img src="family.jpg" alt="Family Photo" />
     <h3 id="title">Naming Ceremony</h3>
-    <p id="welcome">Guess our little one's name 💛</p>
+    <p id="welcome">Guess our little one's name 💛 <b>Starting letters - Che | Cho | La | Su</b></p>
   </div>
 
   <!-- Countdown -->
@@ -157,8 +140,9 @@ button:disabled{
   </div>
 
   <!-- Form -->
-  <input id="guestName" placeholder="Your Name" />
-  <input id="guessName" placeholder="Baby Name Guess" />
+<input id="guestName" placeholder="Your Name" required />
+<input id="city" placeholder="Your City" required />
+<input id="guessName" placeholder="Baby Name Guess" required />
 
   <button onclick="submitForm()" id="submitBtn">Submit</button>
 
@@ -170,24 +154,26 @@ button:disabled{
 
 </div>
 
-
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwoLeYOER8eTiOC3j9NYtfO8IVBeB0_7fxjt1pjeNX5x8brotqgpw0x0xByD-ukW7QR/exec";
+
+const API_URL = "https://script.google.com/macros/s/AKfycbwdXxDvqka0mNhP_mClFaY98ZSxl5W3hwnbBP0esX3I_hozvmxcq2PGpM3zHgQ8KCVb/exec";
 
 /* ===== Language Switch ===== */
 
 const text = {
   en:{
     title:"Naming Ceremony",
-    welcome:"Guess our little one's name 💛",
+    welcome:"Guess our little one's name 💛 - Starting letters - Che | Cho | La | Su",
     guest:"Your Name",
+    city:"Your City",
     guess:"Baby Name Guess",
     btn:"Submit"
   },
   ta:{
     title:"பெயரிடும் விழா",
-    welcome:"குழந்தையின் பெயரை கணிக்கவும் 💛",
+    welcome:"குழந்தையின் பெயரை கணிக்கவும் 💛 - பெயர் தொடக்க எழுத்துகள் - சு | சே | சோ | ல",
     guest:"உங்கள் பெயர்",
+    city:"நகரம்",
     guess:"கணித்த பெயர்",
     btn:"சமர்ப்பிக்கவும்"
   }
@@ -201,6 +187,7 @@ function switchLang(lang){
   document.getElementById("title").innerText=text[lang].title;
   document.getElementById("welcome").innerText=text[lang].welcome;
   document.getElementById("guestName").placeholder=text[lang].guest;
+  document.getElementById("city").placeholder=text[lang].city;
   document.getElementById("guessName").placeholder=text[lang].guess;
   document.getElementById("submitBtn").innerText=text[lang].btn;
 
@@ -214,9 +201,11 @@ function switchLang(lang){
 async function submitForm(){
 
   const guestName = document.getElementById("guestName").value.trim();
+  const city = document.getElementById("city").value.trim();
+  console.log(city)
   const guessName = document.getElementById("guessName").value.trim();
 
-  if(!guestName || !guessName) return;
+  if(!guestName || !guessName || !city) return;
 
   const btn = document.getElementById("submitBtn");
 
@@ -226,19 +215,17 @@ async function submitForm(){
   await fetch(API_URL,{
     method:"POST",
     headers:{ "Content-Type":"text/plain" },
-    body: JSON.stringify({ guestName, guessName })
+    body: JSON.stringify({ guestName, guessName, city })
   });
 
-  /* small delay for smooth feel */
   setTimeout(()=>{
     window.location.href = "wall.html";
   }, 600);
 }
 
-
 /* ===== Countdown ===== */
 
-const END_TIME = "2026-02-16T11:30:00";
+const END_TIME = "2026-02-16T11:00:00";
 
 function updateCountdown(){
   const end = new Date(END_TIME).getTime();
